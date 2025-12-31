@@ -55,6 +55,8 @@ const ConstantEscapeGame = () => {
   });
 
   const handleCatch = contextSafe(() => {
+    if (!ballRef.current || !containerRef.current) return;
+
     setScore(s => s + 1);
     setSpeedMultiplier(prev => prev + 0.5); // Aumenta la fuerza de escape cada vez
 
@@ -63,6 +65,22 @@ const ConstantEscapeGame = () => {
       { scale: 1.5, backgroundColor: "#4ade80" }, 
       { scale: 1, backgroundColor: "#fbbf24", duration: 0.3 }
     );
+
+    // Generar nueva posición aleatoria dentro del contenedor
+    const bounds = 20;
+    const maxX = containerRef.current.clientWidth - 70;
+    const maxY = containerRef.current.clientHeight - 70;
+    
+    const randomX = gsap.utils.random(bounds, maxX);
+    const randomY = gsap.utils.random(bounds, maxY);
+
+    // Reiniciar posición con animación suave
+    gsap.to(ballRef.current, {
+      x: randomX,
+      y: randomY,
+      duration: 0.5,
+      ease: "power2.inOut"
+    });
   });
 
   return (
@@ -78,12 +96,8 @@ const ConstantEscapeGame = () => {
       <div 
         ref={containerRef}
         onMouseMove={handleMouseMove}
-        className="relative w-full max-w-4xl h-[500px] bg-neutral-900 border-2 border-white/10 rounded-2xl cursor-none overflow-hidden"
+        className="relative w-full max-w-4xl h-[500px] bg-neutral-900 border-2 border-white/10 rounded-2xl cursor-crosshair overflow-hidden"
       >
-        {/* El ratón del usuario (opcional, para feedback visual) */}
-        <div className="absolute pointer-events-none w-4 h-4 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2" 
-             style={{ left: "var(--m-x)", top: "var(--m-y)" }} />
-
         <div
           ref={ballRef}
           onClick={handleCatch}

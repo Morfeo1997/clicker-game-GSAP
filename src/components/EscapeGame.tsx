@@ -60,13 +60,29 @@ const ConstantEscapeGame = () => {
       // Calculamos el destino (la dirección opuesta al mouse)
       let targetX = ballX + (dx / distance) * pushForce;
       let targetY = ballY + (dy / distance) * pushForce;
+      const containerRadius = containerRef.current.clientWidth / 2;
+      const ballRadius = 25; // radio de la bola
+      const centerX = containerRadius;
+      const centerY = containerRef.current.clientHeight / 2;
 
-      // 5. Mantener dentro de los límites del contenedor
+      const distFromCenterX = targetX + ballRadius - centerX;
+      const distFromCenterY = targetY + ballRadius - centerY;
+      const distFromCenter = Math.sqrt(distFromCenterX * distFromCenterX + distFromCenterY * distFromCenterY);
+
+      const maxRadius = containerRadius - ballRadius - 10; // 10px de margen
+        if (distFromCenter > maxRadius) {
+          const angle = Math.atan2(distFromCenterY, distFromCenterX);
+          targetX = centerX + Math.cos(angle) * maxRadius - ballRadius;
+          targetY = centerY + Math.sin(angle) * maxRadius - ballRadius;
+        }
+
+
+      // Mantener dentro de los límites del contenedor
       const bounds = 20; // margen
       targetX = gsap.utils.clamp(bounds, containerRef.current.clientWidth - 70, targetX);
       targetY = gsap.utils.clamp(bounds, containerRef.current.clientHeight - 70, targetY);
 
-      // 6. Movemos la pelota instantáneamente hacia ese destino suavizado
+      // Movemos la pelota instantáneamente hacia ese destino suavizado
       xTo.current?.(targetX);
       yTo.current?.(targetY);
     }
@@ -74,23 +90,29 @@ const ConstantEscapeGame = () => {
 
   const handleCatch = contextSafe(() => {
     if (!ballRef.current || !containerRef.current) return;
-
     setScore(s => s + 1);
     setSpeedMultiplier(prev => prev + 0.5); // Aumenta la fuerza de escape cada vez
 
     // Animación de "click exitoso"
     gsap.fromTo(ballRef.current, 
       { scale: 1.5, backgroundColor: "#4ade80" }, 
-      { scale: 1, backgroundColor: "#fbbf24", duration: 0.3 }
+      { scale: 1, backgroundColor: "#3b82f6", duration: 0.3 }
     );
 
     // Generar nueva posición aleatoria dentro del contenedor
-    const bounds = 20;
-    const maxX = containerRef.current.clientWidth - 70;
-    const maxY = containerRef.current.clientHeight - 70;
-    
-    const randomX = gsap.utils.random(bounds, maxX);
-    const randomY = gsap.utils.random(bounds, maxY);
+    const containerRadius = containerRef.current.clientWidth / 2;
+    const ballRadius = 25;
+    const maxRadius = containerRadius - ballRadius - 10;
+
+    // Generar ángulo y radio aleatorios
+    const randomAngle = gsap.utils.random(0, Math.PI * 2);
+    const randomRadius = gsap.utils.random(0, maxRadius);
+
+    // Convertir polar a cartesiano
+    const centerX = containerRadius;
+    const centerY = containerRef.current.clientHeight / 2;
+    const randomX = centerX + Math.cos(randomAngle) * randomRadius - ballRadius;
+    const randomY = centerY + Math.sin(randomAngle) * randomRadius - ballRadius;
 
     // Reiniciar posición con animación suave
     gsap.to(ballRef.current, {
@@ -105,21 +127,21 @@ const ConstantEscapeGame = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-6">
       <div className="mb-6 text-center">
         <h1 className="text-4xl font-black italic tracking-tighter">ESCAPE BALL</h1>
-        <div className="flex justify-center gap-10 mt-2 font-mono text-xl text-yellow-500">
+        <div className="flex justify-center gap-10 mt-2 font-mono text-xl">
           <span>PUNTOS: {score}</span>
-          <span>DIFICULTAD: {speedMultiplier.toFixed(1)}x</span>
+          <span>VELOCIDAD: {speedMultiplier.toFixed(1)}x</span>
         </div>
       </div>
 
       <div 
         ref={containerRef}
         onMouseMove={handleMouseMove}
-        className="relative w-full max-w-4xl h-[500px] bg-neutral-900 border-2 border-white/10 rounded-2xl cursor-crosshair overflow-hidden"
+        className="relative w-full max-w-3xl h-[500px] bg-neutral-900 border-2 border-white/10 rounded-full cursor-crosshair overflow-hidden"
       >
         <div
           ref={ballRef}
           onClick={handleCatch}
-          className="absolute w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(251,191,36,0.4)] hover:shadow-yellow-400/60 transition-shadow"
+          className="relative w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center gap-2"
           style={{ x: 100, y: 100 }}
         >
           {/* Ojo izquierdo */}

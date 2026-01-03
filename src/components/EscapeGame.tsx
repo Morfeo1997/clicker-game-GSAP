@@ -126,7 +126,7 @@ const ConstantEscapeGame = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-6">
       <div className="mb-6 text-center">
-        <h1 className="text-4xl font-black italic tracking-tighter">ESCAPE BALL</h1>
+        <h1 className="text-4xl font-black text-cyan-700 italic tracking-tighter">Atrapa la pelota</h1>
         <div className="flex justify-center gap-10 mt-2 font-mono text-xl">
           <span>PUNTOS: {score}</span>
           <span>VELOCIDAD: {speedMultiplier.toFixed(1)}x</span>
@@ -162,7 +162,9 @@ const ConstantEscapeGame = () => {
         </div>
       </div>
       
-      <p className="mt-4 text-neutral-500 animate-pulse">Intenta tocar el ojo si puedes...</p>
+      <footer className="block w-full text-center mt-4">
+        <p className="text-cyan-700 font-black text-xl">Creado por <a className="text-blue-700 hover:text-cyan-500 transition-colors duration-300" target="_blank" href="https://gaston-gomez1997.netlify.app/">Gastón Gómez</a></p>
+      </footer>
     </div>
   );
 };

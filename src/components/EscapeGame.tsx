@@ -12,8 +12,7 @@ const ConstantEscapeGame = () => {
 
   const { contextSafe } = useGSAP({ scope: containerRef });
 
-  // 1. Creamos "setters" optimizados con quickTo
-  // Estos se inicializan una sola vez y son extremadamente rápidos
+  // Setters optimizados con quickTo
   const xTo = useRef<gsap.QuickToFunc | null>(null);
   const yTo = useRef<gsap.QuickToFunc | null>(null);
   const leftPupilX = useRef<gsap.QuickToFunc | null>(null);
@@ -45,7 +44,7 @@ const ConstantEscapeGame = () => {
     const mouseY = e.nativeEvent.offsetY;
     const pupilOffset = 4;
 
-    // 3. Calcular vector de distancia
+    // Calcular vector de distancia
     const dx = ballX + 25 - mouseX;
     const dy = ballY + 25 - mouseY;
     const angle = Math.atan2(mouseY - (ballY + 25), mouseX - (ballX + 25));
@@ -58,8 +57,7 @@ const ConstantEscapeGame = () => {
     rightPupilX.current?.(pupilX);
     rightPupilY.current?.(pupilY);
 
-    // 4. Lógica de "Empuje"
-    // Si el mouse está a menos de 150px, calculamos una nueva posición
+    // Lógica de "Empuje"
     if (distance < 150) {
       const pushForce = (150 - distance) * (2 * speedMultiplier); // Fuerza basada en cercanía y velocidad
       
@@ -147,7 +145,7 @@ const ConstantEscapeGame = () => {
         <div
           ref={ballRef}
           onClick={handleCatch}
-          className="relative w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center gap-2"
+          className="relative w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center gap-2 shadow-md shadow-blue-400 hover:shadow-blue-700 transition-shadow"
         >
           {/* Ojo izquierdo */}
           <div className="relative w-4 h-5 bg-white rounded-full overflow-hidden">

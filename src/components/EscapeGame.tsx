@@ -28,6 +28,12 @@ const ConstantEscapeGame = () => {
     leftPupilY.current = gsap.quickTo(leftPupilRef.current, "y", { duration: 0.3, ease: "power2" });
     rightPupilX.current = gsap.quickTo(rightPupilRef.current, "x", { duration: 0.3, ease: "power2" });
     rightPupilY.current = gsap.quickTo(rightPupilRef.current, "y", { duration: 0.3, ease: "power2" });
+    if (ballRef.current && containerRef.current) {
+    const centerX = containerRef.current.clientWidth / 2 - 25; // 25 es el radio de la bola
+    const centerY = containerRef.current.clientHeight / 2 - 25;
+    
+    gsap.set(ballRef.current, { x: centerX, y: centerY });
+  }
   }, { scope: containerRef });
 
   const handleMouseMove = contextSafe((e: React.MouseEvent) => {
@@ -142,7 +148,6 @@ const ConstantEscapeGame = () => {
           ref={ballRef}
           onClick={handleCatch}
           className="relative w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center gap-2"
-          style={{ x: 100, y: 100 }}
         >
           {/* Ojo izquierdo */}
           <div className="relative w-4 h-5 bg-white rounded-full overflow-hidden">
